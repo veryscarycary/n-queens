@@ -137,35 +137,122 @@
       return false; // fixme
     },
 
-
+   
 
     // Major Diagonals - go from top-left to bottom-right
     // --------------------------------------------------------------
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      return false;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      debugger;
+      var matrix = this.attributes;
+
+      var recursive = function(i, k, n) {
+        if (i >= n || k >= n) {
+          return false;
+        }
+
+        if (matrix[i][k] === 1) {
+          return true;
+        }
+        // need to check matrix[i + 1][k - 1]
+        return recursive(i + 1, k + 1, matrix.n);
+      };
+
+      // looping through the rows
+      for (var i = 0; i < matrix.n; i++) {
+        // looping through each column/index of the row
+        for (var k = 0; k < matrix.n; k++) {
+          if (matrix[i][k] === 1) {
+            return recursive(i + 1, k + 1, matrix.n);
+            // need to check matrix[i + 1][k - 1]
+            // need to check matrix[i + 1][k - 1]
+            // need to check matrix[i + 1][k - 1]
+          }
+        }
+      }
+      return false;
     },
 
+  
+    // loop through each index i of each row
+    // IF we detect a 1
+      // skip to next row and observe (i - 1)
+      // if we find a one
+        // return true;
+      // if not a one, skip to next row
 
+    // at end of loop, return false;
 
     // Minor Diagonals - go from top-right to bottom-left
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      // var matrix = this.attributes;
+
+      // var recursive = function(i, k, n) {
+      //   if (i >= n || k < 0) {
+      //     return false;
+      //   }
+
+      //   if (matrix[i][k] === 1) {
+      //     return true;
+      //   }
+      //   // need to check matrix[i + 1][k - 1]
+      //   return recursive(i + 1, k - 1);
+      // };
+
+      // // looping through the rows
+      // for (var i = 0; i < matrix.n; i++) {
+      //   // looping through each column/index of the row
+      //   for (var k = 0; k < matrix.n; k++) {
+      //     if (matrix[i][k] === 1) {
+      //       return recursive(i + 1, k - 1, matrix.n);
+      //       // need to check matrix[i + 1][k - 1]
+      //       // need to check matrix[i + 1][k - 1]
+      //       // need to check matrix[i + 1][k - 1]
+      //     }
+      //   }
+      // }
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
-    }
+      var matrix = this.attributes;
+
+      var recursive = function(i, k, n) {
+        if (i >= n || k < 0) {
+          return false;
+        }
+
+        if (matrix[i][k] === 1) {
+          return true;
+        }
+        // need to check matrix[i + 1][k - 1]
+        return recursive(i + 1, k - 1, matrix.n);
+      };
+
+      // looping through the rows
+      for (var i = 0; i < matrix.n; i++) {
+        // looping through each column/index of the row
+        for (var k = 0; k < matrix.n; k++) {
+          if (matrix[i][k] === 1) {
+            return recursive(i + 1, k - 1, matrix.n);
+            // need to check matrix[i + 1][k - 1]
+            // need to check matrix[i + 1][k - 1]
+            // need to check matrix[i + 1][k - 1]
+          }
+        }
+      }
+      return false;
+    },
 
     /*--------------------  End of Helper Functions  ---------------------*/
 
