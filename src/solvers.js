@@ -42,7 +42,6 @@ window.placeRooks = function (n, i, k) {
 window.findNRooksSolution = function(n) {
   var solution = [];
 
-  debugger;
   var board = placeRooks(n, 0, 0);
   // if (counter < n) {
   //   return;
@@ -62,39 +61,114 @@ window.findNRooksSolution = function(n) {
 // create var root1 that represents where we just placed our first 1
 // run recursive function and pass in current as argument and concat to it recursive(current.concat(root1), n)
 // n represents generations
+var extend = function (obj) {
+  var args = Array.prototype.slice.call(arguments);
+  args.forEach(function(argument) {
+    for (var prop in argument) {
+      obj[prop] = args[prop]; 
+    }
+  });
+  return obj;
+};
 
 
 window.countNRooksSolutions = function(n) {
   var possibleSolutions = 0;
   var board = new Board({n: n});
+  debugger;
+  var a = 0;
+  var b = 0;
 
-  var recursive = function () {
-    var rookCounter = 0;
+  var recursive = function (rookCounter, lastBoard, i, j) {
     if (rookCounter === n) {
       possibleSolutions++;
+      console.log(lastBoard.attributes);
+      // lastBoard.rows()[a][b] = 0;
       return;
     }
+    if (i === undefined) { var i = row; }
+    if (j === undefined) { var j = col; }
 
 
-    for (var i = 0; i < n; i++) {
-      for (var j = 0; j < n; j++) {
-        if (board.rows()[i][j] === 0) {
-          board.togglePiece(i, j);
-          if (board.hasAnyRooksConflicts()) {
-            board.togglePiece(i, j);
+    for (; i < n; i++) { // start at 0,0 and check global lastBoard stats
+      for (; j < n; j++) {
+        if (lastBoard.rows()[i][j] === 0) {
+          lastBoard.togglePiece(i, j);
+          if (lastBoard.hasAnyRooksConflicts()) {
+            lastBoard.togglePiece(i, j);
           } else {
+            // a = i; b = j;
             rookCounter++;
-            recursive();
+            recursive(rookCounter, lastBoard);
+            lastBoard.togglePiece(i, j);
+            rookCounter--;
+            // recursive(rookCounter + 1, new lastBoard({n: n}))
+
+            // I think we need to pass in rookcounter and n - 1
             // rookCounter--;
           }
         }
       }
+      j = 0;
     }
+
   };
+
+  for (var row = 0; row < n; row++) {
+    for (var col = 0; col < n; col++) {
+      recursive(0, board, row, col);
+    }
+  }
 
   console.log('Number of solutions for ' + n + ' rooks:', possibleSolutions);
   return possibleSolutions;
 };
+
+/*
+window.countNRooksSolutions = function(n) {
+  var possibleSolutions = 0;
+  var board = new Board({n: n});
+  debugger;
+  var a = 0;
+  var b = 0;
+
+  var recursive = function (rookCounter, lastBoard) {
+    if (rookCounter === n) {
+      possibleSolutions++;
+      lastBoard.togglePiece(a, b) = 0;
+      rookCounter--;
+      // lastBoard = new lastBoard({n: n})
+      // return;
+    }
+
+    // for (let i = 0; i < n; i++) {
+    //   for (let j = 0; j < n; j++) {
+    //     lastBoard = new lastBoard({n: n});
+
+    for (var i = 0; i < n; i++) { // start at 0,0 and check global lastBoard stats
+      for (var j = 0; j < n; j++) {
+        if (lastBoard.rows()[i][j] === 0) {
+          lastBoard.togglePiece(i, j);
+          if (lastBoard.hasAnyRooksConflicts()) {
+            lastBoard.togglePiece(i, j);
+          } else {
+            a = i; b = j;
+            rookCounter++;
+            recursive(rookCounter, lastBoard);
+            // recursive(rookCounter + 1, new lastBoard({n: n}))
+
+            // I think we need to pass in rookcounter and n - 1
+            // rookCounter--;
+            }
+        }
+      }
+    }
+  }
+  recursive(0, board);
+};
+
+
+*/
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {

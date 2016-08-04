@@ -149,7 +149,6 @@
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      debugger;
       var matrix = this.attributes;
 
       var recursive = function(i, k, n) {
