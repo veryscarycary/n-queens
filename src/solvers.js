@@ -16,47 +16,33 @@
 
 
 window.findNRooksSolution = function(n) {
-  var solution; 
-  
-  
-  var makeMatrix = function() {
-    var nestedArray = [];
-    var matrix = [];
-    for (var i = 0; i < n; i++) {
-      nestedArray.push(0);
-    }
-    
-    for (var k = 0; k < n; k++) {
-      matrix.push(nestedArray);
-    }
-    
-    return matrix;
-  };
-
-  var matrix = makeMatrix();
+  var board = new Board({n: n});
+  var solution = [];
+  var matrix = board.attributes;
   var counter = 0;
 
   for (var i = 0; i < matrix.n; i++) {
     for (var k = 0; k < matrix.n; k++) {
-      if (this.hasAnyRooksConflicts() === false) {
+      if (board.hasAnyRooksConflicts() === false) {
         matrix[i][k] = 1;
         counter ++;
-        if (this.hasAnyRooksConflicts() === true) {
+        if (board.hasAnyRooksConflicts() === true) {
           matrix[i][k] = 0;
           counter --;
         }
         if (counter >= n) {
-          return matrix;
+          break;
         }
       }
     }
   }
-  console.log();
   if (counter < n) {
     return;
   }
 
-  solution = matrix;
+  for (let i = 0; i < n; i++) {
+    solution.push(board.get(i));
+  }
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
