@@ -13,16 +13,13 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
-
-
-window.findNRooksSolution = function(n) {
+window.placeRooks = function (n, i, k) {
   var board = new Board({n: n});
-  var solution = [];
   var matrix = board.attributes;
   var counter = 0;
 
-  for (var i = 0; i < matrix.n; i++) {
-    for (var k = 0; k < matrix.n; k++) {
+  for (; i < matrix.n; i++) {
+    for (; k < matrix.n; k++) {
       if (board.hasAnyRooksConflicts() === false) {
         matrix[i][k] = 1;
         counter ++;
@@ -30,15 +27,26 @@ window.findNRooksSolution = function(n) {
           matrix[i][k] = 0;
           counter --;
         }
-        if (counter >= n) {
-          break;
-        }
+        // if (counter >= n) {
+        //   break;
+        // }
       }
     }
+    k = 0;
   }
-  if (counter < n) {
-    return;
-  }
+
+  return board;
+};
+
+
+window.findNRooksSolution = function(n) {
+  var solution = [];
+
+  debugger;
+  var board = placeRooks(n, 0, 0);
+  // if (counter < n) {
+  //   return;
+  // }
 
   for (let i = 0; i < n; i++) {
     solution.push(board.get(i));
@@ -49,11 +57,43 @@ window.findNRooksSolution = function(n) {
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
-window.countNRooksSolutions = function(n) {
-  var solution = undefined; //fixme
+// create var current that represents current solution being recursed onto
+// if there's no conflict, 
+// create var root1 that represents where we just placed our first 1
+// run recursive function and pass in current as argument and concat to it recursive(current.concat(root1), n)
+// n represents generations
 
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  return solutionCount;
+
+window.countNRooksSolutions = function(n) {
+  var possibleSolutions = 0;
+  var board = new Board({n: n});
+
+  var recursive = function () {
+    var rookCounter = 0;
+    if (rookCounter === n) {
+      possibleSolutions++;
+      return;
+    }
+
+
+    for (var i = 0; i < n; i++) {
+      for (var j = 0; j < n; j++) {
+        if (board.rows()[i][j] === 0) {
+          board.togglePiece(i, j);
+          if (board.hasAnyRooksConflicts()) {
+            board.togglePiece(i, j);
+          } else {
+            rookCounter++;
+            recursive();
+            // rookCounter--;
+          }
+        }
+      }
+    }
+  };
+
+  console.log('Number of solutions for ' + n + ' rooks:', possibleSolutions);
+  return possibleSolutions;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
