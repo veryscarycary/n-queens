@@ -61,67 +61,75 @@ window.findNRooksSolution = function(n) {
 // create var root1 that represents where we just placed our first 1
 // run recursive function and pass in current as argument and concat to it recursive(current.concat(root1), n)
 // n represents generations
+if(Array.prototype.equals)
+    console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+  // if the other array is a falsy value, return
+  if (!array)
+      return false;
+
+  // compare lengths - can save a lot of time 
+  if (this.length != array.length)
+      return false;
+
+  for (var i = 0, l=this.length; i < l; i++) {
+      // Check if we have nested arrays
+      if (this[i] instanceof Array && array[i] instanceof Array) {
+          // recurse into the nested arrays
+          if (!this[i].equals(array[i]))
+              return false;       
+      }           
+      else if (this[i] != array[i]) { 
+          // Warning - two different object instances will never be equal: {x:20} != {x:20}
+          return false;   
+      }           
+  }       
+  return true;
+};
+// Hide method from for-in loops
+Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+
 var extend = function (obj) {
-  var args = Array.prototype.slice.call(arguments);
-  args.forEach(function(argument) {
-    for (var prop in argument) {
-      obj[prop] = args[prop]; 
+  for (var i = 0; i < arguments.length; i++) {
+    for (var prop in arguments[i]) {
+      obj[prop] = arguments[i][prop]; 
     }
-  });
+  }
   return obj;
 };
 
 
 window.countNRooksSolutions = function(n) {
-  var possibleSolutions = 0;
+  var numberSolutions;
   var board = new Board({n: n});
-  debugger;
-  var a = 0;
-  var b = 0;
+  var numberSolutions = 0;
 
-  var recursive = function (rookCounter, lastBoard, i, j) {
-    if (rookCounter === n) {
-      possibleSolutions++;
-      console.log(lastBoard.attributes);
-      // lastBoard.rows()[a][b] = 0;
+
+  var findSolutions = function (row) {
+    if (row === n) {
+      numberSolutions++;
       return;
     }
-    if (i === undefined) { var i = row; }
-    if (j === undefined) { var j = col; }
 
+    for (var i = 0; i < n; i++) {
+      // check columns of each row
+      board.togglePiece(row, i);
 
-    for (; i < n; i++) { // start at 0,0 and check global lastBoard stats
-      for (; j < n; j++) {
-        if (lastBoard.rows()[i][j] === 0) {
-          lastBoard.togglePiece(i, j);
-          if (lastBoard.hasAnyRooksConflicts()) {
-            lastBoard.togglePiece(i, j);
-          } else {
-            // a = i; b = j;
-            rookCounter++;
-            recursive(rookCounter, lastBoard);
-            lastBoard.togglePiece(i, j);
-            rookCounter--;
-            // recursive(rookCounter + 1, new lastBoard({n: n}))
-
-            // I think we need to pass in rookcounter and n - 1
-            // rookCounter--;
-          }
-        }
+      if (!board.hasAnyRooksConflicts()) {
+        findSolutions(row + 1);
       }
-      j = 0;
+
+      board.togglePiece(row, i);
     }
 
   };
 
-  for (var row = 0; row < n; row++) {
-    for (var col = 0; col < n; col++) {
-      recursive(0, board, row, col);
-    }
-  }
+  findSolutions(0);
 
-  console.log('Number of solutions for ' + n + ' rooks:', possibleSolutions);
-  return possibleSolutions;
+
+  console.log('Number of solutions for ' + n + ' rooks:', numberSolutions);
+  return numberSolutions;
 };
 
 /*
